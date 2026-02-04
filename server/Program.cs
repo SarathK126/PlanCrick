@@ -9,6 +9,33 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Handle Railway's DATABASE_URL format
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    // Railway provides DATABASE_URL in postgresql:// format
+    // Convert to Npgsql connection string format
+    if (databaseUrl.StartsWith("postgresql://") || databaseUrl.StartsWith("postgres://"))
+    {
+        try
+        {
+            var uri = new Uri(databaseUrl);
+            var userInfo = uri.UserInfo.Split(':');
+            var connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.Trim('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+            builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not parse DATABASE_URL: {ex.Message}");
+        }
+    }
+    else
+    {
+        // Already in correct format
+        builder.Configuration["ConnectionStrings:DefaultConnection"] = databaseUrl;
+    }
+}
+
 builder.Services.AddDbContext<CricketContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
