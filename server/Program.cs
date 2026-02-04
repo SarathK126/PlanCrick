@@ -10,19 +10,33 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<CricketContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configure CORS - Allow origins from environment or default to localhost
+var corsOrigins = builder.Configuration["CORS_ORIGINS"]?.Split(',') 
+    ?? new[] { "http://localhost:5173", "http://localhost:5174" };
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(corsOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
 });
 
 var app = builder.Build();
+
+// Auto-run migrations in production
+if (app.Environment.IsProduction())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<CricketContext>();
+        db.Database.Migrate();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -96,4 +110,10 @@ app.MapPost("/api/plans", async (FieldingPlan plan, CricketContext db) =>
     return Results.Created($"/api/plans/{plan.Id}", plan);
 });
 
-app.Run();
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
+// Get port from environment variable (Railway/Render use PORT)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5017";
+app.Run($"http://0.0.0.0:{port}");
+

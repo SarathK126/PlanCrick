@@ -1,44 +1,181 @@
-# PlanCrick - Cricket Strategy & Field Management
+# 🏏 PlanCrick - Cricket Strategy & Field Management
 
-A full-stack application for managing cricket fielding strategies.
+A full-stack web application for cricket teams to plan, visualize, and manage fielding strategies with an interactive field map.
 
-## Tech Stack
-- **Frontend**: React, Vite, TailwindCSS, Zustand, React Konva
-- **Backend**: ASP.NET Core 9 Web API, Entity Framework Core, SQL Server
+![PlanCrick](https://img.shields.io/badge/Status-Production_Ready-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![.NET](https://img.shields.io/badge/.NET-9.0-purple)
+![React](https://img.shields.io/badge/React-19-blue)
 
-## Prerequisites
-- .NET 9.0 SDK
-- Node.js (v18+)
-- SQL Server (LocalDB or Standard)
+## ✨ Features
 
-## How to Run
+- 🎯 **Interactive Field Map** - Drag-and-drop fielding position management using Konva.js
+- 👥 **Player Management** - Create and manage your team roster
+- 📋 **Fielding Plans** - Save and load different fielding strategies
+- 🏆 **Match Scenarios** - Plan for different match phases (Powerplay, Middle, Death)
+- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
+- 🎨 **Modern UI** - Built with Tailwind CSS and Headless UI
 
-You need to run both the Backend (API) and Frontend (Client) simultaneously.
+## 🚀 Live Demo
 
-### 1. Start the Backend (API)
-Open a terminal and run:
-```bash
-cd server
-dotnet run
+**Frontend**: [https://plancrick.vercel.app](https://plancrick.vercel.app) *(Your URL here)*  
+**Backend API**: [https://plancrick-backend.railway.app](https://plancrick-backend.railway.app) *(Your URL here)*
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 19** - UI framework
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling
+- **Konva.js** - Canvas rendering for field visualization
+- **Zustand** - State management
+- **React Router** - Navigation
+- **Lucide React** - Icons
+
+### Backend
+- **ASP.NET Core 9** - Web API
+- **Entity Framework Core** - ORM
+- **PostgreSQL** - Database
+- **Minimal APIs** - Lightweight API endpoints
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- .NET 9 SDK
+- PostgreSQL (or use Docker)
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/PlanCrick.git
+   cd PlanCrick
+   ```
+
+2. **Setup Backend**
+   ```bash
+   cd server
+   
+   # Update connection string in appsettings.json
+   # Install dependencies (auto-restore on build)
+   dotnet restore
+   
+   # Run migrations
+   dotnet ef database update
+   
+   # Run the API
+   dotnet run
+   ```
+   Backend will run on `http://localhost:5017`
+
+3. **Setup Frontend**
+   ```bash
+   cd client
+   
+   # Install dependencies
+   npm install
+   
+   # Run dev server
+   npm run dev
+   ```
+   Frontend will run on `http://localhost:5173`
+
+4. **Open your browser**
+   Navigate to `http://localhost:5173`
+
+## 🌐 Deployment
+
+We provide **FREE** deployment options using:
+- **Vercel** (Frontend)
+- **Railway** or **Render** (Backend + PostgreSQL)
+
+📖 **See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide**
+
+### Quick Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/PlanCrick)
+
+## 📂 Project Structure
+
 ```
-The API will start at `http://localhost:5017`.
-
-### 2. Start the Frontend (Client)
-Open a **new** terminal window and run:
-```bash
-cd client
-npm install  # Only needed the first time
-npm run dev
+PlanCrick/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── config/        # Configuration files
+│   │   ├── store/         # Zustand state management
+│   │   └── App.jsx        # Main application
+│   ├── vercel.json        # Vercel configuration
+│   └── package.json
+│
+├── server/                # ASP.NET Core backend
+│   ├── Data/             # EF Core DbContext
+│   ├── Models/           # Entity models
+│   ├── Program.cs        # API endpoints
+│   ├── railway.json      # Railway configuration
+│   └── Procfile          # Render configuration
+│
+├── DEPLOYMENT.md         # Deployment guide
+└── README.md            # This file
 ```
-The application will start at `http://localhost:5173`.
 
-## Features
-- **Interactive Field Map**: Drag and drop players.
-- **Team Management**: Manage Team 1 & Team 2 squads.
-- **Match Scenarios**: Toggle between T20, ODI, and 8-Over formats.
-- **Rules Engine**: Visual warnings for fielding restrictions (Powerplay).
-- **Save Plans**: Persist your strategies to the database.
+## 🔧 Configuration
 
-## Troubleshooting
-- **Database Issues**: If you see DB errors, run `dotnet ef database update` in the `server` folder to apply migrations.
-- **Port Conflicts**: Ensure ports 5017 (Server) and 5173 (Client) are free.
+### Environment Variables
+
+**Frontend** (`.env`):
+```bash
+VITE_API_URL=http://localhost:5017  # Backend URL
+```
+
+**Backend** (Environment/Railway/Render):
+```bash
+ConnectionStrings__DefaultConnection=<postgres-connection-string>
+CORS_ORIGINS=http://localhost:5173,https://your-app.vercel.app
+ASPNETCORE_ENVIRONMENT=Production
+```
+
+## 🎯 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/players` | Get all players |
+| POST | `/api/players` | Create new player |
+| PUT | `/api/players/{id}` | Update player |
+| DELETE | `/api/players/{id}` | Delete player |
+| GET | `/api/plans` | Get all fielding plans |
+| POST | `/api/plans` | Save fielding plan |
+| GET | `/api/plans/{id}` | Get specific plan |
+| GET | `/health` | Health check |
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Cricket field diagram inspiration from various cricket strategy tools
+- Built with modern web technologies
+- Deployed on free-tier hosting platforms
+
+## 📧 Contact
+
+Your Name - [@yourhandle](https://twitter.com/yourhandle)
+
+Project Link: [https://github.com/yourusername/PlanCrick](https://github.com/yourusername/PlanCrick)
+
+---
+
+Made with ❤️ and 🏏 by the PlanCrick Team
