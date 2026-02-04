@@ -55,13 +55,31 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Auto-run migrations in production
+// Auto-run migrations in production (with error handling)
 if (app.Environment.IsProduction())
 {
-    using (var scope = app.Services.CreateScope())
+    try
     {
-        var db = scope.ServiceProvider.GetRequiredService<CricketContext>();
-        db.Database.Migrate();
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<CricketContext>();
+            
+            // Check if database is accessible before migrating
+            if (await db.Database.CanConnectAsync())
+            {
+                app.Logger.LogInformation("Running database migrations...");
+                await db.Database.MigrateAsync();
+                app.Logger.LogInformation("Database migrations completed successfully");
+            }
+            else
+            {
+                app.Logger.LogWarning("Database not accessible. Skipping migrations. Ensure DATABASE_URL is set in Railway.");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Failed to run migrations. Database may not be linked yet. Application will continue but database operations may fail.");
     }
 }
 
