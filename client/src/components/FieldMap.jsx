@@ -10,6 +10,21 @@ const CENTER_Y = FIELD_HEIGHT / 2;
 const FieldMap = ({ width = 800, height = 800 }) => {
     const { currentPlan, updatePlayerPosition, players, matchPhase, tournamentType } = useStore();
 
+    // Responsive sizing
+    const [dimensions, setDimensions] = React.useState({ width, height });
+
+    React.useEffect(() => {
+        const updateDimensions = () => {
+            const isMobile = window.innerWidth < 768;
+            const newSize = isMobile ? Math.min(window.innerWidth - 32, 600) : 800;
+            setDimensions({ width: newSize, height: newSize });
+        };
+
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+        return () => window.removeEventListener('resize', updateDimensions);
+    }, []);
+
     // Determine restrictions
     let maxOutside = 5;
     let isPowerplay = false;
@@ -34,12 +49,12 @@ const FieldMap = ({ width = 800, height = 800 }) => {
     const isViolation = playersOutside > maxOutside;
 
     // Scale factor if width/height props change (responsive)
-    const scale = width / FIELD_WIDTH;
+    const scale = dimensions.width / FIELD_WIDTH;
 
     return (
         <div className="border border-gray-700 rounded-lg overflow-hidden bg-[#1a1a1a] relative">
             {/* Info Panel */}
-            <div className="absolute top-4 right-4 bg-black/60 p-2 rounded text-xs text-white z-10 pointer-events-none">
+            <div className="absolute top-2 md:top-4 right-2 md:right-4 bg-black/60 p-1.5 md:p-2 rounded text-[10px] md:text-xs text-white z-10 pointer-events-none">
                 <div className={`font-bold ${isPowerplay ? 'text-yellow-400' : 'text-blue-400'}`}>
                     {isPowerplay ? 'POWERPLAY' : 'NORMAL PHASE'}
                 </div>
@@ -49,7 +64,7 @@ const FieldMap = ({ width = 800, height = 800 }) => {
                 </div>
             </div>
 
-            <Stage width={width} height={height} scaleX={scale} scaleY={scale}>
+            <Stage width={dimensions.width} height={dimensions.height} scaleX={scale} scaleY={scale}>
                 <Layer>
                     {/* Grass Field */}
                     <Ellipse

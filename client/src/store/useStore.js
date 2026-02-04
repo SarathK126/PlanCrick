@@ -35,6 +35,14 @@ const useStore = create((set) => ({
     isViewMode: false,
     toggleViewMode: () => set((state) => ({ isViewMode: !state.isViewMode })),
 
+    currentView: 'dashboard', // 'dashboard' or 'field'
+    setCurrentView: (view) => set({ currentView: view }),
+
+    isSidebarOpen: false, // For mobile sidebar toggle
+    toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+
+    clearAllField: () => set({ currentPlan: { id: null, name: 'New Plan', positions: [] } }),
+
     tournamentType: 'T20', // T20, ODI, 8Over
     setTournamentType: (type) => set({ tournamentType: type }),
 

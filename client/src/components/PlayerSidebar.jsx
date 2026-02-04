@@ -97,6 +97,19 @@ const PlayerSidebar = () => {
                 >
                     <Plus size={16} /> Add New Player
                 </button>
+
+                {currentPlan.positions.length > 0 && (
+                    <button
+                        onClick={() => {
+                            if (confirm('Are you sure you want to clear all players from the field?')) {
+                                useStore.getState().clearAllField();
+                            }
+                        }}
+                        className="mt-2 w-full bg-red-600 hover:bg-red-500 text-white py-2 rounded text-sm font-medium flex items-center justify-center gap-2"
+                    >
+                        <X size={16} /> Clear All Field
+                    </button>
+                )}
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
